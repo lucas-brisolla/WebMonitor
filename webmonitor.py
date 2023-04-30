@@ -1,29 +1,38 @@
-import requests 
-from smtplib import SMTP
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+import requests
+from bs4 import BeautifulSoup
 
-smtp_server = 'smtp.gmail.com'
+import smtplib
+
+    
+url = "https://github.com/"
+section = "#section-id"
+
+email_address = "milleni00s@gmail.com"
+email_password = "robozao242424"
+
+
+
+r = requests.get(url)
+soup = BeautifulSoup(r.content, "html.parser")
+section_content = soup.select_one(section).get_text().strip()
+
+smtp_server = "smtp.example.com"
 smtp_port = 587
 
-username = 'robozao@gmail.com'
-password = 'robozao424267'
+with smtplib.SMTP(smtp_server, smtp_port) as server:
+    server.starttls()
+    server.login(email_address, email_password)
 
-msg = MIMEMultipart()
+    subject = "Mudanças no site detectadas"
+    body = f"A seção {section} do site {url} foi atualizada:\n\n{section_content}"
 
+    message = f"Subject: {subject}\n\n{body}"
+    
+with open("previous_section.txt","r") as f:
+    previous_section_content = f.read().strip()
 
-r = requests.get('https://github.com/lucas-brisolla')
-
-if r.content == r.content:
-    print("mudou")
-    msg['From'] = username
-    msg['To'] = 'lucasabrisolla@gmail.com'
-    msg['Subject'] = 'Status do site'
-    body = 'Houve uma alteração no site'
-    msg.attach(MIMEText(body,'plain'))
-    with SMTP(smtp_server, smtp_port) as server:
-      server.starttls()
-      server.login(username, password)
-      server.sendmail(username, 'lucasabrisolla@gmail.com', msg.as_string())
+if section_content != previous_section_content:
+    print("Uma mudança foi detectada")
+    server.sendmail(email_address, email_address, message)
 else:
-    print("continua igual")
+    print("Nenhuma mudança foi detectada.")
