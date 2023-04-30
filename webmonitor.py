@@ -8,7 +8,7 @@ url = "https://github.com/"
 section = "#section-id"
 
 email_address = "milleni00s@gmail.com"
-email_password = "robozao242424"
+email_password = "********"
 
 
 
